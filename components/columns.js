@@ -1,9 +1,5 @@
 export const columns = [
   {
-    key: 'countryCode',
-    label: 'code'
-  },
-  {
     key: 'label',
     label: 'Region'
   },
