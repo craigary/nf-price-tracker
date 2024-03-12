@@ -1,73 +1,74 @@
 'use client'
 import { Chip } from '@nextui-org/chip'
+import { Pagination } from '@nextui-org/pagination'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
 import { Tooltip } from '@nextui-org/tooltip'
-import { useAsyncList } from '@react-stately/data'
 import { CircleCheck, CircleX } from 'lucide-react'
 import Image from 'next/image'
-import { useCallback } from 'react'
+import { useState } from 'react'
 
 export default function DataTable({ data, columns }) {
-  let list = useAsyncList({
-    load() {
-      return {
-        items: data
-      }
-    },
-    sort({ items, sortDescriptor }) {
-      return {
-        items: items.sort((a, b) => {
-          let first, second
-          switch (sortDescriptor.column) {
-            case 'localPriceCny':
-              first = Object.values(a.localPrice['CNY'])[0]
-              second = Object.values(b.localPrice['CNY'])[0]
-              break
-            case 'localPriceUsd':
-              first = Object.values(a.localPrice['USD'])[0]
-              second = Object.values(b.localPrice['USD'])[0]
-              break
-            case 'giftCard':
-              first = a.giftCard
-              second = b.giftCard
-              // IF the first is true and the second is false, the first should come first if both are the same, sort by label
-              if (first === true && second === false) {
-                return -1
-              }
-              if (first === false && second === true) {
-                return 1
-              }
-              if (first === second) {
-                first = a.label
-                second = b.label
-                let cmp = first.localeCompare(second)
-                if (sortDescriptor.direction === 'descending') {
-                  cmp *= -1
-                }
-                return cmp
-              }
-              break
-            default:
-              first = a.label
-              second = b.label
-              let cmp = first.localeCompare(second)
-              if (sortDescriptor.direction === 'descending') {
-                cmp *= -1
-              }
-              return cmp
-          }
+  const [sortDescriptor, setSortDescriptor] = useState({ column: 'label', direction: 'ascending' })
+  const [page, setPage] = useState(1)
+  const itemsPerPage = 15
 
-          let cmp = first < second ? -1 : 1
+  const sortData = (items, sortDescriptor) => {
+    return items.sort((a, b) => {
+      let first, second
+      switch (sortDescriptor.column) {
+        case 'localPriceCny':
+          first = Object.values(a.localPrice['CNY'])[0]
+          second = Object.values(b.localPrice['CNY'])[0]
+          break
+        case 'localPriceUsd':
+          first = Object.values(a.localPrice['USD'])[0]
+          second = Object.values(b.localPrice['USD'])[0]
+          break
+        case 'giftCard':
+          first = a.giftCard
+          second = b.giftCard
+          // IF the first is true and the second is false, the first should come first if both are the same, sort by label
+          if (first === true && second === false) {
+            return -1
+          }
+          if (first === false && second === true) {
+            return 1
+          }
+          if (first === second) {
+            first = a.label
+            second = b.label
+            let cmp = first.localeCompare(second)
+            if (sortDescriptor.direction === 'descending') {
+              cmp *= -1
+            }
+            return cmp
+          }
+          break
+        default:
+          first = a.label
+          second = b.label
+          let cmp = first.localeCompare(second)
           if (sortDescriptor.direction === 'descending') {
             cmp *= -1
           }
           return cmp
-        })
       }
-    }
-  })
 
-  const renderCell = useCallback((row, columnKey) => {
+      let cmp = first < second ? -1 : 1
+      if (sortDescriptor.direction === 'descending') {
+        cmp *= -1
+      }
+      return cmp
+    })
+  }
+
+  const sortedData = sortData(data, sortDescriptor)
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage)
+  const startIndex = (page - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const displayedData = sortedData.slice(startIndex, endIndex)
+
+  const renderCell = (row, columnKey) => {
     const cellValue = row[columnKey]
     const usdLocalPrice = row.localPrice.USD
     const cnyLocalPrice = row.localPrice.CNY
@@ -153,47 +154,57 @@ export default function DataTable({ data, columns }) {
       default:
         return cellValue
     }
-  }, [])
+  }
+
+  const handleSortChange = descriptor => {
+    setSortDescriptor(descriptor)
+    setPage(1) // Reset to first page when sorting changes
+  }
 
   return (
-    <Table
-      sortDescriptor={list.sortDescriptor}
-      onSortChange={list.sort}
-      // bottomContent={
-      //   pages > 0 ? (
-      //     <div className="flex w-full justify-center">
-      //       <Pagination
-      //         isCompact
-      //         showControls
-      //         showShadow
-      //         color="primary"
-      //         page={page}
-      //         total={pages}
-      //         onChange={page => setPage(page)}
-      //       />
-      //     </div>
-      //   ) : null
-      // }
-    >
-      <TableHeader columns={columns}>
-        {column => {
-          return (
-            <TableColumn
-              key={column.key}
-              allowsSorting={['label', 'localPriceCny', 'localPriceUsd'].includes(column.key)}
-            >
-              {column.label}
-            </TableColumn>
+    <>
+      <Table
+        bottomContent={
+          totalPages > 1 && (
+            <div className="flex w-full justify-center mt-4">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="primary"
+                page={page}
+                total={totalPages}
+                onChange={setPage}
+              />
+            </div>
           )
-        }}
-      </TableHeader>
-      <TableBody items={list.items} emptyContent={'获取信息失败，请坐和放宽。'}>
-        {item => (
-          <TableRow key={item.countryCode}>
-            {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+        }
+        className="w-full"
+        sortDescriptor={sortDescriptor}
+        onSortChange={handleSortChange}
+      >
+        <TableHeader columns={columns}>
+          {column => {
+            return (
+              <TableColumn
+                key={column.key}
+                allowsSorting={['label', 'localPriceCny', 'localPriceUsd', 'giftCard'].includes(
+                  column.key
+                )}
+              >
+                {column.label}
+              </TableColumn>
+            )
+          }}
+        </TableHeader>
+        <TableBody items={displayedData} emptyContent={'获取信息失败，请坐和放宽。'}>
+          {item => (
+            <TableRow key={item.countryCode}>
+              {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   )
 }

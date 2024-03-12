@@ -30,10 +30,14 @@ export default async function Home() {
         <h1 className="text-2xl md:text-4xl font-medium text-center">
           Netflix Pricing Comparison Table
         </h1>
-        <h2 className="mt-4">Beautiful, fast and modern React UI library.</h2>
+        <h2 className="mt-4 font-serif">
+          If my code is bug-free, the data should update daily
+          <br />
+          <span className="italic">(though my code often has bugs.)</span>
+        </h2>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex w-full flex-col max-w-screen-md">
         <DataTable columns={columns} data={dataWithGiftCardInfo} />
       </div>
     </section>
