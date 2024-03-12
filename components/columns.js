@@ -18,5 +18,9 @@ export const columns = [
   {
     key: 'localPriceUsd',
     label: 'USD'
+  },
+  {
+    key: 'giftCard',
+    label: 'Gift Card'
   }
 ]

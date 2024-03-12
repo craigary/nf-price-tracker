@@ -1,7 +1,9 @@
 'use client'
+import { Chip } from '@nextui-org/chip'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
 import { Tooltip } from '@nextui-org/tooltip'
 import { useAsyncList } from '@react-stately/data'
+import { CircleCheck, CircleX } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback } from 'react'
 
@@ -24,6 +26,26 @@ export default function DataTable({ data, columns }) {
             case 'localPriceUsd':
               first = Object.values(a.localPrice['USD'])[0]
               second = Object.values(b.localPrice['USD'])[0]
+              break
+            case 'giftCard':
+              first = a.giftCard
+              second = b.giftCard
+              // IF the first is true and the second is false, the first should come first if both are the same, sort by label
+              if (first === true && second === false) {
+                return -1
+              }
+              if (first === false && second === true) {
+                return 1
+              }
+              if (first === second) {
+                first = a.label
+                second = b.label
+                let cmp = first.localeCompare(second)
+                if (sortDescriptor.direction === 'descending') {
+                  cmp *= -1
+                }
+                return cmp
+              }
               break
             default:
               first = a.label
@@ -63,6 +85,17 @@ export default function DataTable({ data, columns }) {
             />
             <p>{cellValue}</p>
           </div>
+        )
+      case 'giftCard':
+        const giftCard = row.giftCard
+        return (
+          <Chip
+            startContent={giftCard ? <CircleCheck size={18} /> : <CircleX size={18} />}
+            variant="flat"
+            color={giftCard ? 'success' : 'danger'}
+          >
+            {giftCard ? 'Yes' : 'No'}
+          </Chip>
         )
 
       case 'plan':
@@ -126,7 +159,21 @@ export default function DataTable({ data, columns }) {
     <Table
       sortDescriptor={list.sortDescriptor}
       onSortChange={list.sort}
-      aria-label="Example table with dynamic content"
+      // bottomContent={
+      //   pages > 0 ? (
+      //     <div className="flex w-full justify-center">
+      //       <Pagination
+      //         isCompact
+      //         showControls
+      //         showShadow
+      //         color="primary"
+      //         page={page}
+      //         total={pages}
+      //         onChange={page => setPage(page)}
+      //       />
+      //     </div>
+      //   ) : null
+      // }
     >
       <TableHeader columns={columns}>
         {column => {
