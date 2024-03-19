@@ -95,6 +95,7 @@ export default function DataTable({ data, columns }) {
             variant="flat"
             color={giftCard ? 'success' : 'danger'}
           >
+            {giftCard ? 'Yes' : 'No'}
           </Chip>
         )
 
