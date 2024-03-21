@@ -21,6 +21,8 @@ export default async function Home() {
   const giftCardInfo = queue[2].data
   const giftCardInfoTime = queue[2].time
 
+  // console.log({ localPricingTime, ratingInfoTime, giftCardInfoTime })
+
   const dataWithPricing = calculateLocalPricing(localPricing, ratingInfo)
   const dataWithGiftCardInfo = dataWithPricing.map(item => {
     item.giftCard = giftCardInfo[item.countryCode]
@@ -43,10 +45,25 @@ export default async function Home() {
       <div className="flex w-full flex-col max-w-screen-md">
         <DataTable columns={columns} data={dataWithGiftCardInfo} />
       </div>
-      <div>
-        <p>Currency Update Time：{new Date(ratingInfoTime).toLocaleString()}</p>
-        <p>Gift Card Info Update Time：{new Date(giftCardInfoTime).toLocaleString()}</p>
-        <p>Local Price Update Time：{new Date(localPricingTime).toLocaleString()}</p>
+      <div className="text-sm">
+        <p>
+          Currency info update time:
+          {new Date(ratingInfoTime).toLocaleString('en-US', {
+            hour12: false
+          })}
+        </p>
+        <p>
+          Gift Card info update time:
+          {new Date(giftCardInfoTime).toLocaleString('en-US', {
+            hour12: false
+          })}
+        </p>
+        <p>
+          Pricing update time:
+          {new Date(localPricingTime).toLocaleString('en-US', {
+            hour12: false
+          })}
+        </p>
       </div>
     </section>
   )

@@ -62,9 +62,6 @@ dependencies:
   cheerio:
     specifier: 1.0.0-rc.12
     version: 1.0.0-rc.12
-  cloudflare-kv-storage:
-    specifier: ^0.2.0
-    version: 0.2.0
   clsx:
     specifier: ^2.0.0
     version: 2.1.0
@@ -95,6 +92,9 @@ dependencies:
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
+  remote-cloudflare-kv:
+    specifier: ^1.0.0
+    version: 1.0.0
   tailwindcss:
     specifier: 3.3.5
     version: 3.3.5
@@ -2003,13 +2003,6 @@ packages:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
     dev: false
 
-  /cloudflare-kv-storage@0.2.0:
-    resolution: {integrity: sha512-028uZuu43Wm+MfuJFwC+IJ4E1uZ3o2XVSKNLzFqIDnSUDs60SDzQfBpKRt9pnribkwqttuCSKmswx2UQyafXcw==}
-    dependencies:
-      ms: 2.1.3
-      tslib: 2.6.2
-    dev: false
-
   /clsx@1.2.1:
     resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
     engines: {node: '>=6'}
@@ -3865,6 +3858,10 @@ packages:
       define-properties: 1.2.1
       es-errors: 1.3.0
       set-function-name: 2.0.2
+    dev: false
+
+  /remote-cloudflare-kv@1.0.0:
+    resolution: {integrity: sha512-jLosG35X8Qnhj/OcYCb+pissUNr4ubnHDC21APaJ3Ghlwl75PKm+YMD9KTvp8RJtIrt2oHJLkXHUX0hsdA9d9A==}
     dev: false
 
   /resolve-from@4.0.0:
