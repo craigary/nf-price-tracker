@@ -15,8 +15,11 @@ export default async function Home() {
   ])
 
   const localPricing = queue[0].data
+  const localPricingTime = queue[0].time
   const ratingInfo = queue[1].data
+  const ratingInfoTime = queue[1].time
   const giftCardInfo = queue[2].data
+  const giftCardInfoTime = queue[2].time
 
   const dataWithPricing = calculateLocalPricing(localPricing, ratingInfo)
   const dataWithGiftCardInfo = dataWithPricing.map(item => {
@@ -39,6 +42,11 @@ export default async function Home() {
 
       <div className="flex w-full flex-col max-w-screen-md">
         <DataTable columns={columns} data={dataWithGiftCardInfo} />
+      </div>
+      <div>
+        <p>Currency Update Time：{new Date(ratingInfoTime).toLocaleString()}</p>
+        <p>Gift Card Info Update Time：{new Date(giftCardInfoTime).toLocaleString()}</p>
+        <p>Local Price Update Time：{new Date(localPricingTime).toLocaleString()}</p>
       </div>
     </section>
   )
