@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 import { fontSans } from '@/config/fonts'
 import '@/styles/globals.css'
 import clsx from 'clsx'
